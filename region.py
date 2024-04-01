@@ -1,22 +1,22 @@
 import time
-from PIL import Image
-import pyautogui
+from capture.select_window import capture_selected_area, capture_fixed_area
+from tesseract.text_extraction import extract_text_from_image
+from translation.en_translation import translate_text
 
-from capture import select_window
-from tesseract import text_extraction
-from translation import en_translation
 
 def main():
     print("캡처할 영역을 마우스로 지정하세요.")
-    region = select_window.capture_selected_area()  # 사용자가 영역을 지정하도록 함
+    screenshot, region = capture_selected_area()
+
+    fixed_region = region
 
     prev_translated_text = ""
     try:
         while True:
-            screenshot = pyautogui.screenshot(region=region)
-            text = text_extraction.extract_text_from_image(screenshot)
+            screenshot = capture_fixed_area(fixed_region)
+            text = extract_text_from_image(screenshot)
             if text:
-                translated_text = en_translation.translate_text(text)
+                translated_text = translate_text(text)
                 if translated_text != prev_translated_text:
                     print("번역된 텍스트:", translated_text)
                     prev_translated_text = translated_text
